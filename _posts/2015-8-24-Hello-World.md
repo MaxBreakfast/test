@@ -8,7 +8,7 @@ I was recently working on project utilizing the Spotify api in order to search s
 After doing some research, I discovered an angular plugin called ui-select. ui-select abstracts away the code needed to build a functional search drop-down.  
 
 
-`
+```JavaScript
 
   findAllUsers: function(req, res) {
     User.find({}, function(err, docs) {
@@ -19,5 +19,5 @@ After doing some research, I discovered an angular plugin called ui-select. ui-s
       }
     });
   }
-  `
+  ```
 
