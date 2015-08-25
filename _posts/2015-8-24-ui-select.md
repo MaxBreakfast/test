@@ -24,11 +24,7 @@ findAllUsers: function(req, res) {
 }
   ```
   
-  Then I created a factory in order to send user intent to the back end of the application. The first 
-  function in the factory calls the findAllUsers function and passes the data back to the controller
-  that called it. For the purpose of this example I have left off the request handler 
-  for addFriend but it simply adds a selected user (from the search field) to the currently 
-  logged in user's friends list. 
+Then I created a factory in order to send user intent to the back end of the application. The first function in the factory calls the findAllUsers function and passes the data back to the controller that called it. For the purpose of this example I have left off the request handler for addFriend but it simply adds a selected user (from the search field) to the currently logged in user's friends list. 
   
   ```Javascript
 .factory('userFactory', function ($window, $http) {
@@ -55,17 +51,17 @@ var addFriend = function(user){
 }
 
   return {
-    addToNetwork:addToNetwork,
+    addFriend:addFriend,
     findUsers: findUsers
   };
 })
 ```
-I then created two controllers, that would
+The next step is to create the controllers. The findUser controller calls the findUser factory function and then filters through the returned data (an array of user objects). The findUser controller pushes any of the objects whose first name or last name property matches what the user has typed into the search field, into the results array. AddUSer passes the selected user object from ui-select field to the addFriend factory function so it can be added to the database.
 
 ```javascript
 $scope.findUser = function (inputStr) {
   $scope.results = [];
-  beerPmt.findUsers().then(function (data) {
+  userFactory.findUsers().then(function (data) {
     if (inputStr.length > 0) {
       for (var i = 0; i < data.length; i++) {
         if (data[i].name.first.toLowerCase().match(inputStr.toLowerCase()) !== null || data[i].name.last.toLowerCase().match(inputStr.toLowerCase()) !== null) {
@@ -80,7 +76,7 @@ $scope.addUser = function(user){
   if(user){
 
     if(AuthService.isAuth()){
-      beerPmt.addToNetwork(user)
+      userFactory.addFriend(user)
       .then(function(data){
         console.log('CALLED FROM CALLBACK', data)
         $scope.network.push(data);
@@ -91,12 +87,13 @@ $scope.addUser = function(user){
 };
 
 ```
+Now we're finlly at the HTML and the ui-select. There is a lot going on this snippet of code but the crux of it is the ui-select-choices line. In this line we call findUser on whatever text is being entered by the user. The results that are created by the call to findUser are then displayed in divs that follow the template provided. If one of those divs is selected, the addUser function is called for the user represented by that div.
 
 ```html
-<ui-select ng-model='result.selected' on-select='addUser(result.selected); toggle()'  theme="bootstrap" ng-disabled="false" reset-search-input="false" uiSelectConfig.appendToBody = true; style="width: 300px;">
+<ui-select ng-model='result.selected' on-select='addUser(result.selected)'  theme="bootstrap" ng-disabled="false" reset-search-input="true" uiSelectConfig.appendToBody = true; style="width: 300px;">
   <ui-select-match id='ui-select-container' placeholder="I owe a beer to...">{{$select.selected.name}}</ui-select-match>
-  <ui-select-choices repeat='user in results|limitTo:10' refresh='findUser($select.search)' refresh-delay='0'>
+  <ui-select-choices refresh='findUser($select.search)' repeat='user in results|limitTo:10'  refresh-delay='0'>
     <div ng-bind-html='user.name | highlight: $select.search'></div>
   </ui-select-choices>
-</ui=select>
+</ui-select>
 ```
