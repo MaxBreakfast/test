@@ -7,6 +7,9 @@ I was recently working on project utilizing the Spotify api in order to search s
 
 After doing some research, I discovered an angular plugin called ui-select. ui-select abstracts away the code needed to build a functional search drop-down.  
 
+For the purpose of this example I'm going to work backwards.
+
+First I created a request handler on the server which returns a list of all users in the database when called.
 
 ```JavaScript
 
@@ -20,8 +23,15 @@ findAllUsers: function(req, res) {
   });
 }
   ```
+  
+  Then I created a factory in order to send user intent to the back end of the application. The first 
+  function in the factory calls the findAllUsers function and passes the data back to the controller
+  that called it. For the purpose of this example I have left off the request handler 
+  for addFriend but it simply adds a selected user (from the search field) to the currently 
+  logged in user's friends list. 
+  
   ```Javascript
-.factory('beerPmt', function ($window, $http) {
+.factory('userFactory', function ($window, $http) {
 
 var findUsers = function () {
   return $http({
@@ -32,7 +42,7 @@ var findUsers = function () {
     return resp.data;
   });
 };
-var addToNetwork = function(user){
+var addFriend = function(user){
   return $http({
     method: 'POST',
     url: '/api/users/tabs',
@@ -50,7 +60,22 @@ var addToNetwork = function(user){
   };
 })
 ```
+I then created two controllers, that would
+
 ```javascript
+$scope.findUser = function (inputStr) {
+  $scope.results = [];
+  beerPmt.findUsers().then(function (data) {
+    if (inputStr.length > 0) {
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].name.first.toLowerCase().match(inputStr.toLowerCase()) !== null || data[i].name.last.toLowerCase().match(inputStr.toLowerCase()) !== null) {
+          $scope.results.push({name: data[i].name.first + ' ' + data[i].name.last, username: data[i].username, _id: data[i]._id});
+        }
+      }
+    }
+  });
+};
+
 $scope.addUser = function(user){
   if(user){
 
@@ -65,18 +90,6 @@ $scope.addUser = function(user){
   }
 };
 
-$scope.findUser = function (inputStr) {
-  $scope.results = [];
-  beerPmt.findUsers().then(function (data) {
-    if (inputStr.length > 0) {
-      for (var i = 0; i < data.length; i++) {
-        if (data[i].name.first.toLowerCase().match(inputStr.toLowerCase()) !== null || data[i].name.last.toLowerCase().match(inputStr.toLowerCase()) !== null) {
-          $scope.results.push({name: data[i].name.first + ' ' + data[i].name.last, username: data[i].username, _id: data[i]._id});
-        }
-      }
-    }
-  });
-};
 ```
 
 ```html
