@@ -44,10 +44,10 @@ var addToNetwork = function(user){
   });
 }
 
-return {
-  addToNetwork:addToNetwork,
-  findUsers: findUsers
-};
+  return {
+    addToNetwork:addToNetwork,
+    findUsers: findUsers
+  };
 })
 ```
 ```javascript
