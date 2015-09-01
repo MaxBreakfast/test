@@ -64,8 +64,11 @@ $scope.findUser = function (inputStr) {
   userFactory.findUsers().then(function (data) {
     if (inputStr.length > 0) {
       for (var i = 0; i < data.length; i++) {
-        if (data[i].name.first.toLowerCase().match(inputStr.toLowerCase()) !== null || data[i].name.last.toLowerCase().match(inputStr.toLowerCase()) !== null) {
-          $scope.results.push({name: data[i].name.first + ' ' + data[i].name.last, username: data[i].username, _id: data[i]._id});
+        if (data[i].name.first.toLowerCase().match(inputStr.toLowerCase()) !== null ||
+        data[i].name.last.toLowerCase().match(inputStr.toLowerCase()) !== null) {
+          $scope.results.push(
+          {name: data[i].name.first + ' ' + data[i].name.last, username: data[i].username, _id:
+          data[i]._id});
         }
       }
     }
