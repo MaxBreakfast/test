@@ -90,9 +90,14 @@ $scope.addUser = function(user){
 Now we're finlly at the HTML and the ui-select. There is a lot going on this snippet of code but the crux of it is the ui-select-choices line. In this line we call findUser on whatever text is being entered by the user. The results that are created by the call to findUser are then displayed in divs that follow the template contained in the ng-bind-html. If one of those divs is selected, the addUser function is called for the user represented by that div.
 
 ```html
-<ui-select ng-model='result.selected' on-select='addUser(result.selected)'  theme="bootstrap" ng-disabled="false" reset-search-input="true" uiSelectConfig.appendToBody = true; style="width: 300px;">
-  <ui-select-match id='ui-select-container' placeholder="I owe a beer to...">{{$select.selected.name}}</ui-select-match>
-  <ui-select-choices refresh='findUser($select.search)' repeat='user in results|limitTo:10'  refresh-delay='0'>
+<ui-select ng-model='result.selected' on-select='addUser(result.selected)'  
+theme="bootstrap" ng-disabled="false" reset-search-input="true" 
+uiSelectConfig.appendToBody = true; style="width: 300px;">
+  <ui-select-match id='ui-select-container' placeholder="I owe a beer to...">
+  {{$select.selected.name}}
+  </ui-select-match>
+  <ui-select-choices refresh='findUser($select.search)' 
+  repeat='user in results|limitTo:10'  refresh-delay='0'>
     <div ng-bind-html='user.name | highlight: $select.search'></div>
   </ui-select-choices>
 </ui-select>
